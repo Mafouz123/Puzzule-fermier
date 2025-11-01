@@ -57,41 +57,39 @@
   <script>
     const board = document.getElementById("puzzle-board");
     const mascot = document.getElementById("mascot");
-    let positions = [0, 1, 2, 3];
+    let pieces = [0, 1, 2, 3];
 
-    function createPieces() {
+    function createBoard() {
       board.innerHTML = "";
-      positions.forEach((pos, i) => {
-        const piece = document.createElement("div");
-        piece.className = "piece";
-        piece.style.backgroundImage = "url('farm_scene.jpg')";
-        piece.style.backgroundPosition = `${-(pos % 2) * 200}px ${-Math.floor(pos / 2) * 200}px`;
-        piece.draggable = true;
-        piece.dataset.correct = i;
-        piece.dataset.current = pos;
-        piece.addEventListener("dragstart", dragStart);
-        piece.addEventListener("dragover", e => e.preventDefault());
-        piece.addEventListener("drop", drop);
-        board.appendChild(piece);
+      pieces.forEach((pos, i) => {
+        const div = document.createElement("div");
+        div.className = "piece";
+        div.style.backgroundImage = "url('farm_scene.jpg')";
+        div.style.backgroundPosition = `${-(pos % 2) * 200}px ${-Math.floor(pos / 2) * 200}px`;
+        div.draggable = true;
+        div.dataset.index = i;
+        div.dataset.pos = pos;
+        div.addEventListener("dragstart", dragStart);
+        div.addEventListener("dragover", e => e.preventDefault());
+        div.addEventListener("drop", drop);
+        board.appendChild(div);
       });
     }
 
     function dragStart(e) {
-      e.dataTransfer.setData("text/plain", e.target.dataset.current);
+      e.dataTransfer.setData("text/plain", e.target.dataset.index);
     }
 
     function drop(e) {
-      const from = e.dataTransfer.getData("text/plain");
-      const to = e.target.dataset.current;
-      const fromIndex = positions.indexOf(parseInt(from));
-      const toIndex = positions.indexOf(parseInt(to));
-      [positions[fromIndex], positions[toIndex]] = [positions[toIndex], positions[fromIndex]];
-      createPieces();
+      const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+      const toIndex = parseInt(e.target.dataset.index);
+      [pieces[fromIndex], pieces[toIndex]] = [pieces[toIndex], pieces[fromIndex]];
+      createBoard();
       checkWin();
     }
 
     function checkWin() {
-      if (positions.every((val, idx) => val === idx)) {
+      if (pieces.every((val, idx) => val === idx)) {
         mascot.style.display = "block";
         alert("Bravo 🎉 Puzzle terminé !");
       }
@@ -99,11 +97,11 @@
 
     function shufflePieces() {
       mascot.style.display = "none";
-      positions = positions.sort(() => Math.random() - 0.5);
-      createPieces();
+      pieces = pieces.sort(() => Math.random() - 0.5);
+      createBoard();
     }
 
-    createPieces();
+    shufflePieces();
   </script>
 </body>
 </html>
