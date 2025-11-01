@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Puzzle Fermier 🐔</title>
+  <title>🐣 Puzzle Fermier</title>
   <style>
     body {
       background-color: #fefae0;
@@ -13,6 +13,7 @@
     }
     h1 {
       color: #d62828;
+      font-size: 2em;
     }
     #puzzle-board {
       width: 400px;
@@ -38,7 +39,8 @@
       display: none;
     }
     button {
-      background-color: #ffca3a;
+      background-color: #3a86ff;
+      color: white;
       border: none;
       padding: 10px 20px;
       font-size: 16px;
@@ -46,14 +48,17 @@
       cursor: pointer;
       margin-top: 10px;
     }
+    button:hover {
+      background-color: #2b70d3;
+    }
   </style>
 </head>
 <body>
-  <h1>🐣 Puzzle Fermier</h1>
+  <h1>🐥 Puzzle Fermier</h1>
   <div id="puzzle-board"></div>
   <button onclick="shufflePieces()">🔁 Rejouer</button>
   <br>
-  <img id="mascot" src="mascot_chick.png" alt="Mascotte">
+  <img id="mascot" src="mascot_chick.jpg" alt="Mascotte">
   <script>
     const board = document.getElementById("puzzle-board");
     const mascot = document.getElementById("mascot");
