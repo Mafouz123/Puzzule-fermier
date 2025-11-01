@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Puzzle Fermier 🐔</title>
+  <style>
+    body {
+      background-color: #fefae0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #d62828;
+    }
+    #puzzle-board {
+      width: 400px;
+      height: 400px;
+      margin: 20px auto;
+      display: grid;
+      grid-template-columns: repeat(2, 200px);
+      grid-template-rows: repeat(2, 200px);
+      gap: 2px;
+      border: 4px solid #ffca3a;
+    }
+    .piece {
+      width: 200px;
+      height: 200px;
+      background-size: 400px 400px;
+      cursor: grab;
+      border-radius: 8px;
+      box-shadow: 0 0 5px #aaa;
+    }
+    #mascot {
+      margin-top: 20px;
+      width: 100px;
+      display: none;
+    }
+    button {
+      background-color: #ffca3a;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐣 Puzzle Fermier</h1>
+  <div id="puzzle-board"></div>
+  <button onclick="shufflePieces()">🔁 Rejouer</button>
+  <br>
+  <img id="mascot" src="mascot_chick.png" alt="Mascotte">
+  <script>
+    const board = document.getElementById("puzzle-board");
+    const mascot = document.getElementById("mascot");
+    let positions = [0, 1, 2, 3];
+
+    function createPieces() {
+      board.innerHTML = "";
+      positions.forEach((pos, i) => {
+        const piece = document.createElement("div");
+        piece.className = "piece";
+        piece.style.backgroundImage = "url('farm_scene.jpg')";
+        piece.style.backgroundPosition = `${-(pos % 2) * 200}px ${-Math.floor(pos / 2) * 200}px`;
+        piece.draggable = true;
+        piece.dataset.correct = i;
+        piece.dataset.current = pos;
+        piece.addEventListener("dragstart", dragStart);
+        piece.addEventListener("dragover", e => e.preventDefault());
+        piece.addEventListener("drop", drop);
+        board.appendChild(piece);
+      });
+    }
+
+    function dragStart(e) {
+      e.dataTransfer.setData("text/plain", e.target.dataset.current);
+    }
+
+    function drop(e) {
+      const from = e.dataTransfer.getData("text/plain");
+      const to = e.target.dataset.current;
+      const fromIndex = positions.indexOf(parseInt(from));
+      const toIndex = positions.indexOf(parseInt(to));
+      [positions[fromIndex], positions[toIndex]] = [positions[toIndex], positions[fromIndex]];
+      createPieces();
+      checkWin();
+    }
+
+    function checkWin() {
+      if (positions.every((val, idx) => val === idx)) {
+        mascot.style.display = "block";
+        alert("Bravo 🎉 Puzzle terminé !");
+      }
+    }
+
+    function shufflePieces() {
+      mascot.style.display = "none";
+      positions = positions.sort(() => Math.random() - 0.5);
+      createPieces();
+    }
+
+    createPieces();
+  </script>
+</body>
+</html>
