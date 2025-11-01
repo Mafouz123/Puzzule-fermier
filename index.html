@@ -29,9 +29,13 @@
       width: 200px;
       height: 200px;
       background-size: 400px 400px;
-      cursor: grab;
       border-radius: 8px;
       box-shadow: 0 0 5px #aaa;
+      transition: transform 0.2s;
+    }
+    .selected {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #3a86ff;
     }
     #mascot {
       margin-top: 20px;
@@ -63,6 +67,7 @@
     const board = document.getElementById("puzzle-board");
     const mascot = document.getElementById("mascot");
     let pieces = [0, 1, 2, 3];
+    let selectedIndex = null;
 
     function createBoard() {
       board.innerHTML = "";
@@ -71,26 +76,24 @@
         div.className = "piece";
         div.style.backgroundImage = "url('farm_scene.jpg')";
         div.style.backgroundPosition = `${-(pos % 2) * 200}px ${-Math.floor(pos / 2) * 200}px`;
-        div.draggable = true;
         div.dataset.index = i;
-        div.dataset.pos = pos;
-        div.addEventListener("dragstart", dragStart);
-        div.addEventListener("dragover", e => e.preventDefault());
-        div.addEventListener("drop", drop);
+        div.addEventListener("click", () => handleSelect(i));
+        div.addEventListener("touchstart", () => handleSelect(i));
+        if (i === selectedIndex) div.classList.add("selected");
         board.appendChild(div);
       });
     }
 
-    function dragStart(e) {
-      e.dataTransfer.setData("text/plain", e.target.dataset.index);
-    }
-
-    function drop(e) {
-      const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
-      const toIndex = parseInt(e.target.dataset.index);
-      [pieces[fromIndex], pieces[toIndex]] = [pieces[toIndex], pieces[fromIndex]];
+    function handleSelect(i) {
+      if (selectedIndex === null) {
+        selectedIndex = i;
+      } else {
+        [pieces[selectedIndex], pieces[i]] = [pieces[i], pieces[selectedIndex]];
+        selectedIndex = null;
+        createBoard();
+        checkWin();
+      }
       createBoard();
-      checkWin();
     }
 
     function checkWin() {
@@ -102,6 +105,7 @@
 
     function shufflePieces() {
       mascot.style.display = "none";
+      selectedIndex = null;
       pieces = pieces.sort(() => Math.random() - 0.5);
       createBoard();
     }
